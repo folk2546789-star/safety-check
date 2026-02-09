@@ -72,8 +72,9 @@
         /* --- LIST & FILTER --- */
         .search-container { padding: 10px 15px 0 15px; flex-shrink: 0; }
         .input-box { width: 100%; padding: 10px 12px; border: 1px solid #8A8886; border-radius: var(--radius); font-family: 'Prompt'; font-size: 0.95rem; outline: none; background: white; }
-        
-        .filter-chips { padding: 10px 15px; display: flex; gap: 8px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
+        .input-box:focus { border-color: var(--primary); border-width: 2px; padding: 9px 11px; }
+
+        .filter-chips { padding: 12px 15px; display: flex; gap: 8px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
         .chip { 
             border: 1px solid #CFD8DC; padding: 6px 14px; border-radius: 20px; 
             font-size: 0.85rem; color: var(--text-main); background: white; 
@@ -124,7 +125,7 @@
         .switch { position: relative; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #CFD8DC; border-radius: 34px; transition: .3s; }
-        .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 4px; bottom: 4px; background: white; border-radius: 50%; transition: .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         input:checked + .slider { background: var(--success); }
         input:checked + .slider:before { transform: translateX(22px); }
 
@@ -271,9 +272,9 @@
 
     <script>
         // ============================================
-        // https://default4d3f6608ec8c4b1f9484274a4b699e.fb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/bef1c20f305f436e9ddfb14558297369/triggers/manual/paths/invoke?api-version=1
+        // ⚠️ วางลิงก์ Power Automate ตรงนี้ (ถ้าไม่มี ปล่อยว่างจะใช้แบบ Offline)
         // ============================================
-        const MICROSOFT_FLOW_URL = ""; 
+        const MICROSOFT_FLOW_URL = "https://default4d3f6608ec8c4b1f9484274a4b699e.fb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/bef1c20f305f436e9ddfb14558297369/triggers/manual/paths/invoke?api-version=1"; 
 
         // --- DATASET: 90 POINTS (FULL) ---
         const DB_INIT = [
@@ -379,7 +380,7 @@
             tempPhoto: null,
 
             init() {
-                const stored = localStorage.getItem('firePins_Pro_V5');
+                const stored = localStorage.getItem('firePins_Pro_V6');
                 this.data = stored ? JSON.parse(stored) : DB_INIT.map(d => ({ ...d, history: {} }));
                 this.month = new Date().toISOString().slice(0, 7);
                 document.getElementById('monthPicker').value = this.month;
@@ -499,11 +500,8 @@
                 const isFail = checks.some(c => !c);
                 const photoSec = document.getElementById('photoSection');
                 
-                if(isFail) {
-                    photoSec.style.display = 'block';
-                } else if(!this.tempPhoto) {
-                    photoSec.style.display = 'none';
-                }
+                if(isFail) photoSec.style.display = 'block';
+                else if(!this.tempPhoto) photoSec.style.display = 'none';
             },
             
             updatePhotoUI() {
@@ -570,20 +568,19 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     }).then(() => {
-                        alert("✅ บันทึกสำเร็จ (ส่ง SharePoint เรียบร้อย)");
-                        UI.closeModal('modalInspect');
-                        this.render();
+                        alert("✅ บันทึกและส่งข้อมูลเข้า SharePoint สำเร็จ!");
                     }).catch(err => {
+                        console.error(err);
                         alert("⚠️ บันทึกในเครื่องแล้ว (แต่ส่งออนไลน์ไม่ผ่าน เช็คเน็ต)");
-                        UI.closeModal('modalInspect');
-                        this.render();
                     }).finally(() => {
+                        this.render();
+                        UI.closeModal('modalInspect');
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> บันทึกข้อมูล';
                     });
                 } else {
                     // Offline Mode
-                    alert("✅ บันทึกในเครื่องเรียบร้อย (Offline Mode)");
+                    alert("✅ บันทึกในเครื่องเรียบร้อย (ยังไม่ได้เชื่อมต่อ Power Automate)");
                     this.render();
                     UI.closeModal('modalInspect');
                     btn.disabled = false;
@@ -652,8 +649,8 @@
                 reader.readAsText(file);
             },
 
-            saveToStorage() { localStorage.setItem('firePins_Ent_Final', JSON.stringify(this.data)); },
-            clearData() { if(confirm('ยืนยันลบข้อมูลการตรวจทั้งหมด? (ข้อมูลถัง 90 ใบจะยังอยู่)')) { localStorage.removeItem('firePins_Ent_Final'); location.reload(); } },
+            saveToStorage() { localStorage.setItem('firePins_Pro_V6', JSON.stringify(this.data)); },
+            clearData() { if(confirm('ยืนยันลบข้อมูลการตรวจทั้งหมด? (ข้อมูลถัง 90 ใบจะยังอยู่)')) { localStorage.removeItem('firePins_Pro_V6'); location.reload(); } },
             
             handleDeepLink() {
                 const pid = new URLSearchParams(window.location.search).get('id');
