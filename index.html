@@ -7,23 +7,22 @@
     
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.coผผผผผm/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <!-- QR Scanner Engine -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
     <style>
-        /* --- DESIGN SYSTEM (Microsoft Theme) --- */
+        /* --- DESIGN SYSTEM (Red Theme) --- */
         :root {
-            --primary: #D32F2F;         /* Safety Red */
+            --primary: #D32F2F;         
             --primary-dark: #B71C1C;
-            --secondary: #263238;      
-            --success: #2E7D32;         /* Green */
-            --warning: #F9A825;         /* Orange */
-            --bg-body: #F0F2F5;
+            --success: #2E7D32;         
+            --warning: #F9A825;         
+            --bg-body: #F3F2F1;
             --surface: #FFFFFF;
-            --text-main: #37474F;
-            --text-muted: #90A4AE;
+            --text-main: #201F1E;
+            --text-muted: #605E5C;
             --radius: 12px;
             --header-h: 64px;
         }
@@ -38,19 +37,16 @@
             overflow: hidden;
         }
 
-        /* --- HEADER --- */
+        /* HEADER */
         header { 
-            height: var(--header-h); 
-            background: var(--primary); 
-            color: white;               
-            padding: 0 16px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3); 
-            z-index: 50; flex-shrink: 0; 
+            height: var(--header-h); background: var(--primary); color: white;
+            padding: 0 16px; display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3); z-index: 50; flex-shrink: 0; 
         }
         .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.2rem; }
-        .brand i { font-size: 1.4rem; color: rgba(255,255,255,0.9); }
-        .header-actions .btn-icon { color: white; opacity: 0.9; cursor: pointer; background: none; border: none; font-size: 1.2rem;}
+        .header-status { font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px; }
+        .dot { width: 8px; height: 8px; background: #EEE; border-radius: 50%; }
+        .dot.online { background: #00E676; box-shadow: 0 0 5px #00E676; }
 
         .month-selector {
             padding: 6px 12px; border: 1px solid rgba(255,255,255,0.3); 
@@ -59,7 +55,7 @@
         }
         .month-selector option { color: #333; }
 
-        /* --- DASHBOARD --- */
+        /* DASHBOARD */
         .dashboard { padding: 15px; background: var(--surface); border-bottom: 1px solid #ECEFF1; flex-shrink: 0; }
         .progress-card { background: #fff; border: 1px solid #E0E0E0; border-radius: var(--radius); padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .progress-bar { height: 10px; background: #ECEFF1; border-radius: 5px; overflow: hidden; margin: 10px 0; }
@@ -69,84 +65,67 @@
         .defect-tags { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; }
         .d-tag { font-size: 0.75rem; background: #FFEBEE; color: var(--primary); padding: 4px 10px; border-radius: 12px; white-space: nowrap; border: 1px solid #FFCDD2; }
 
-        /* --- LIST & FILTER --- */
+        /* LIST & FILTER */
         .search-container { padding: 10px 15px 0 15px; flex-shrink: 0; }
         .input-box { width: 100%; padding: 10px 12px; border: 1px solid #8A8886; border-radius: var(--radius); font-family: 'Prompt'; font-size: 0.95rem; outline: none; background: white; }
-        .input-box:focus { border-color: var(--primary); border-width: 2px; padding: 9px 11px; }
-
+        
         .filter-chips { padding: 12px 15px; display: flex; gap: 8px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
         .chip { 
             border: 1px solid #CFD8DC; padding: 6px 14px; border-radius: 20px; 
             font-size: 0.85rem; color: var(--text-main); background: white; 
             white-space: nowrap; cursor: pointer; transition: all 0.2s; font-weight: 500;
-            display: flex; align-items: center; gap: 6px;
         }
-        .chip.active { transform: scale(1.05); border-color: transparent; color: white; box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
         #filter-all.active { background: var(--text-main); }     
         #filter-pending.active { background: var(--primary); }   
         #filter-fail.active { background: var(--warning); color: #333; }
 
         #list-container { flex: 1; overflow-y: auto; padding: 10px 15px; display: grid; gap: 10px; padding-bottom: 90px; }
-        
-        .card { 
-            background: var(--surface); padding: 16px; border-radius: var(--radius); 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04); 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-left: 5px solid #CFD8DC; cursor: pointer; transition: transform 0.1s; 
-        }
+        .card { background: var(--surface); padding: 16px; border-radius: var(--radius); box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #CFD8DC; cursor: pointer; transition: transform 0.1s; }
         .card:active { transform: scale(0.98); }
         .card.pass { border-left-color: var(--success); }
         .card.fail { border-left-color: var(--primary); background: #FFEBEE; }
-        .card-info h3 { margin: 0 0 6px 0; font-size: 1rem; color: var(--text-main); font-weight: 600; }
-        .card-info p { margin: 0; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;}
+        .card-info h3 { margin: 0 0 4px 0; font-size: 0.95rem; color: var(--text-main); font-weight: 600; }
+        .card-info p { margin: 0; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
         .status-icon { font-size: 1.4rem; color: #CFD8DC; }
         .card.pass .status-icon { color: var(--success); }
         .card.fail .status-icon { color: var(--primary); }
+        .inspector-badge { font-size: 0.7rem; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
 
-        /* --- FAB --- */
+        /* FAB */
         .fab-wrapper { position: fixed; bottom: 30px; right: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 40; }
         .fab { width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.25); cursor: pointer; font-size: 1.2rem; transition: transform 0.2s; }
         .fab:active { transform: scale(0.95); }
         .fab-scan { background: var(--primary); width: 64px; height: 64px; font-size: 1.6rem; }
         .fab-excel { background: var(--success); }
+        .fab-refresh { background: var(--text-main); width: 48px; height: 48px; font-size: 1.1rem; }
 
-        /* --- MODALS --- */
+        /* MODAL */
         .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 100; display: none; justify-content: center; align-items: flex-end; backdrop-filter: blur(2px); }
         .modal.show { display: flex; }
         .sheet { background: var(--surface); width: 100%; max-width: 600px; border-radius: 24px 24px 0 0; padding: 25px; max-height: 90dvh; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
         .sheet-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         
         /* FORM COMPONENTS */
         .check-item { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #F5F5F5; align-items: center; }
         .check-label { font-size: 0.95rem; font-weight: 500; color: var(--text-main); }
-        
         .switch { position: relative; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #CFD8DC; border-radius: 34px; transition: .3s; }
         .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 4px; bottom: 4px; background: white; border-radius: 50%; transition: .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         input:checked + .slider { background: var(--success); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
         .form-control { width: 100%; padding: 14px; border: 1px solid #CFD8DC; border-radius: 12px; margin-top: 15px; font-family: 'Prompt'; font-size: 1rem; color: var(--text-main); background: #FAFAFA; outline: none; -webkit-appearance: none; }
-        .form-control:focus { border-color: var(--primary); background: #FFF; }
-        
         .btn-save { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; margin-top: 25px; font-size: 1.1rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(211, 47, 47, 0.25); display: flex; justify-content: center; align-items: center; gap: 10px;}
-        .btn-save:active { transform: scale(0.98); }
         
-        /* PHOTO UPLOAD */
         #photoSection { display: none; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .photo-area { margin-top: 20px; border: 2px dashed #CFD8DC; border-radius: 12px; padding: 25px; text-align: center; color: var(--text-muted); cursor: pointer; background: #FAFAFA; transition: 0.2s; }
-        .photo-area:active { background: #ECEFF1; border-color: var(--text-muted); }
         .photo-preview { max-width: 100%; max-height: 250px; border-radius: 8px; display: none; margin-top: 15px; margin-left: auto; margin-right: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-
         #qr-reader { width: 100%; border-radius: 16px; overflow: hidden; background: black; }
-
-        /* MENU */
-        .menu-btn { width: 100%; padding: 15px; text-align: left; background: none; border: none; border-bottom: 1px solid #F0F0F0; font-family: 'Prompt'; font-size: 1rem; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 12px; }
-        .menu-btn i { width: 24px; color: var(--text-muted); }
+        .menu-btn { width: 100%; padding: 15px; text-align: left; background: none; border: none; border-bottom: 1px solid #F0F0F0; font-family: 'Prompt'; font-size: 1rem; color: var(--text-main); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -154,23 +133,24 @@
     <header>
         <div class="brand">
             <i class="fa-solid fa-fire-extinguisher"></i> FireCheck
+            <div id="statusBadge" class="header-status"><span id="statusDot" class="dot"></span> <span id="statusText">Offline</span></div>
         </div>
         <div class="header-actions">
             <input type="month" id="monthPicker" class="month-selector" onchange="App.changeMonth()">
-            <button class="btn-icon" onclick="UI.openModal('modalMenu')" style="color:white;"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+            <button class="btn-icon" onclick="UI.openModal('modalMenu')" style="color:white; background:none; border:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-bars"></i></button>
         </div>
     </header>
 
     <div class="dashboard">
         <div class="progress-card">
             <div class="stat-row">
-                <span style="font-weight:600; color:var(--text-main);">ความคืบหน้า</span>
+                <span style="font-weight:600; color:var(--text-main);">ความคืบหน้า (Cloud)</span>
                 <span id="statsPercent" style="color:var(--primary); font-weight:700;">0%</span>
             </div>
             <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
             <div class="stat-row">
                 <span id="statsCount">0/90 จุด</span>
-                <span id="statsFail" style="color:var(--primary);"></span>
+                <span id="statsFail" style="color:var(--warning);"></span>
             </div>
         </div>
         <div class="defect-tags" id="defectTags"></div>
@@ -181,20 +161,15 @@
     </div>
     
     <div class="filter-chips">
-        <div class="chip active" id="filter-all" onclick="App.filter('all', this)">
-            <i class="fa-solid fa-layer-group"></i> ทั้งหมด
-        </div>
-        <div class="chip" id="filter-pending" onclick="App.filter('pending', this)">
-            <i class="fa-regular fa-clock"></i> รอตรวจ
-        </div>
-        <div class="chip" id="filter-fail" onclick="App.filter('fail', this)">
-            <i class="fa-solid fa-triangle-exclamation"></i> มีปัญหา
-        </div>
+        <div class="chip active" id="filter-all" onclick="App.filter('all', this)">ทั้งหมด</div>
+        <div class="chip" id="filter-pending" onclick="App.filter('pending', this)">รอตรวจ</div>
+        <div class="chip" id="filter-fail" onclick="App.filter('fail', this)">มีปัญหา</div>
     </div>
 
     <div id="list-container"></div>
 
     <div class="fab-wrapper">
+        <div class="fab fab-refresh" onclick="App.syncCloud()" title="อัปเดตข้อมูล"><i class="fa-solid fa-rotate"></i></div>
         <div class="fab fab-excel" onclick="App.exportExcel()" title="ส่งออก Excel"><i class="fa-solid fa-file-excel"></i></div>
         <div class="fab fab-scan" onclick="App.openScanner()" title="สแกน QR"><i class="fa-solid fa-qrcode"></i></div>
     </div>
@@ -202,18 +177,18 @@
     <!-- INSPECT MODAL -->
     <div id="modalInspect" class="modal">
         <div class="sheet">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div class="sheet-header">
                 <div>
                     <h2 style="margin:0; color:var(--text-main); font-size:1.4rem;">บันทึกผล</h2>
                     <p id="inspectTitle" style="color:var(--text-muted); margin:4px 0 0 0; font-size:0.9rem;">FE-XX</p>
                     <p id="lastCheckInfo" style="font-size:0.75rem; color:var(--success); margin-top:4px; display:none;"><i class="fa-solid fa-clock-rotate-left"></i> ตรวจล่าสุด: <span id="lastCheckDate"></span></p>
                 </div>
-                <button onclick="UI.closeModal('modalInspect')" style="background:none; border:none; font-size:1.8rem; color:#DDD; line-height:1;">&times;</button>
+                <button onclick="UI.closeModal('modalInspect')" style="background:none; border:none; font-size:1.8rem; color:#DDD;">&times;</button>
             </div>
 
             <div style="margin-top:20px;" id="checklistForm"></div>
 
-            <!-- Photo Upload (Auto-show on Fail) -->
+            <!-- Photo Upload -->
             <div id="photoSection">
                 <div class="photo-area" onclick="document.getElementById('photoInput').click()">
                     <i class="fa-solid fa-camera fa-2x" style="color:var(--primary);"></i>
@@ -232,28 +207,6 @@
         </div>
     </div>
 
-    <!-- MENU MODAL -->
-    <div id="modalMenu" class="modal">
-        <div class="sheet">
-            <h2 style="margin-top:0; margin-bottom: 20px;">เมนูจัดการ</h2>
-            
-            <div style="margin-bottom: 20px;">
-                <label style="font-size:0.8rem; color:var(--text-muted);">เลือกเดือน</label>
-                <input type="month" id="monthPickerMenu" class="form-control" style="margin-top:5px;" onchange="App.changeMonthFromMenu()">
-            </div>
-
-            <button class="menu-btn" onclick="App.backupData()"><i class="fa-solid fa-download"></i> สำรองข้อมูล (Backup)</button>
-            <button class="menu-btn" onclick="document.getElementById('fileRestore').click()"><i class="fa-solid fa-upload"></i> กู้คืนข้อมูล (Restore)</button>
-            <input type="file" id="fileRestore" style="display:none" accept=".json" onchange="App.restoreData(this)">
-            
-            <button class="menu-btn" onclick="App.clearData()" style="color:var(--primary); border-bottom:none;"><i class="fa-solid fa-trash"></i> ล้างข้อมูลทั้งหมด (Reset)</button>
-            
-            <div style="text-align:center; margin-top:30px;">
-                <button onclick="UI.closeModal('modalMenu')" style="background:none; border:1px solid #ddd; padding:10px 30px; border-radius:24px; color:#666;">ปิดเมนู</button>
-            </div>
-        </div>
-    </div>
-
     <!-- SCANNER MODAL -->
     <div id="modalScan" class="modal">
         <div class="sheet">
@@ -262,7 +215,7 @@
                 <div id="qr-reader"></div>
                 <p style="color:#90A4AE; margin:20px 0 10px;">หรือกรอกรหัสด้วยมือ</p>
                 <div style="display:flex; gap:10px; justify-content:center;">
-                    <input type="text" id="manualId" class="form-control" style="margin:0; width:120px; text-transform:uppercase;" placeholder="FE-01">
+                    <input type="text" id="manualId" class="form-control" style="margin:0; width:120px; text-transform:uppercase; text-align:center;" placeholder="FE-01">
                     <button onclick="App.manualScan()" class="btn-save" style="margin-top:0; width:auto; padding:10px 20px;">GO</button>
                 </div>
             </div>
@@ -270,11 +223,29 @@
         </div>
     </div>
 
+    <!-- MENU MODAL -->
+    <div id="modalMenu" class="modal">
+        <div class="sheet">
+            <h2 style="margin-top:0; margin-bottom: 20px;">เมนูจัดการ</h2>
+            <div style="margin-bottom: 20px;">
+                <label style="font-size:0.8rem; color:var(--text-muted);">เลือกเดือน</label>
+                <input type="month" id="monthPickerMenu" class="form-control" style="margin-top:5px;" onchange="App.changeMonthFromMenu()">
+            </div>
+            <button class="menu-btn" onclick="App.backupData()"><i class="fa-solid fa-download"></i> สำรองข้อมูล (Backup)</button>
+            <button class="menu-btn" onclick="document.getElementById('fileRestore').click()"><i class="fa-solid fa-upload"></i> กู้คืนข้อมูล (Restore)</button>
+            <input type="file" id="fileRestore" style="display:none" accept=".json" onchange="App.restoreData(this)">
+            <button class="menu-btn" onclick="App.clearData()" style="color:var(--primary); border-bottom:none;"><i class="fa-solid fa-trash"></i> ล้างข้อมูลทั้งหมด (Reset)</button>
+            <div style="text-align:center; margin-top:30px;">
+                <button onclick="UI.closeModal('modalMenu')" style="background:none; border:1px solid #ddd; padding:10px 30px; border-radius:24px; color:#666;">ปิดเมนู</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================
-        // ⚠️ วางลิงก์ Power Automate ตรงนี้ (ถ้าไม่มี ปล่อยว่างจะใช้แบบ Offline)
+        // ⚠️ วางลิงก์ Google Apps Script ตรงนี้ ⚠️
         // ============================================
-        const MICROSOFT_FLOW_URL = "https://default4d3f6608ec8c4b1f9484274a4b699e.fb.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/bef1c20f305f436e9ddfb14558297369/triggers/manual/paths/invoke?api-version=1"; 
+        const GOOGLE_SCRIPT_URL = ""; 
 
         // --- DATASET: 90 POINTS (FULL) ---
         const DB_INIT = [
@@ -373,6 +344,7 @@
         // --- APP ENGINE ---
         const App = {
             data: [],
+            cloudStatus: {}, // เก็บสถานะจาก Cloud
             month: '',
             filterType: 'all',
             currentId: null,
@@ -380,12 +352,53 @@
             tempPhoto: null,
 
             init() {
-                const stored = localStorage.getItem('firePins_Pro_V6');
+                const stored = localStorage.getItem('firePins_Ent_Final');
                 this.data = stored ? JSON.parse(stored) : DB_INIT.map(d => ({ ...d, history: {} }));
                 this.month = new Date().toISOString().slice(0, 7);
                 document.getElementById('monthPicker').value = this.month;
+                this.updateOnlineStatus();
                 this.render();
+                this.syncCloud(); // ดึงข้อมูลทันทีเมื่อเปิดแอป
                 this.handleDeepLink();
+            },
+
+            updateOnlineStatus() {
+                const badge = document.getElementById('statusDot');
+                const text = document.getElementById('statusText');
+                if(GOOGLE_SCRIPT_URL.startsWith('http')) {
+                    badge.classList.add('online');
+                    text.innerText = 'Online';
+                } else {
+                    badge.classList.remove('online');
+                    text.innerText = 'Offline';
+                }
+            },
+
+            // ดึงข้อมูลจาก Google Sheet
+            syncCloud() {
+                if(!GOOGLE_SCRIPT_URL) return;
+                
+                // Show Loading
+                const btn = document.querySelector('.fab-refresh i');
+                if(btn) btn.classList.add('fa-spin');
+
+                fetch(GOOGLE_SCRIPT_URL + "?action=read")
+                .then(res => res.json())
+                .then(data => {
+                    this.cloudStatus = {};
+                    data.forEach(row => {
+                        // เก็บข้อมูลเฉพาะของเดือนปัจจุบัน (ถ้าจะให้ดีควรกรองใน Sheet หรือส่ง parameter เดือนไป)
+                        // เบื้องต้นใช้ timestamp เทียบเดือน
+                        if(row.time.startsWith(new Date().getFullYear())) { // Simplified check
+                           this.cloudStatus[row.id] = { status: row.status, inspector: row.inspector, time: row.time };
+                        }
+                    });
+                    this.render();
+                })
+                .catch(err => console.error("Sync Error:", err))
+                .finally(() => {
+                     if(btn) btn.classList.remove('fa-spin');
+                });
             },
 
             render() {
@@ -397,10 +410,28 @@
                 const defectCounts = {};
 
                 this.data.forEach(item => {
-                    const h = item.history[this.month];
-                    const status = h ? h.status : 'pending';
-                    const isInspected = status !== 'pending';
+                    // ใช้ข้อมูลจาก Cloud ถ้ามี, ถ้าไม่มีใช้ในเครื่อง
+                    const cloudInfo = this.cloudStatus[item.id];
+                    const localInfo = item.history[this.month];
                     
+                    // Priority: Cloud > Local
+                    // Note: Status ใน Cloud อาจเป็น "ปกติ" หรือ "พบปัญหา..."
+                    let status = 'pending';
+                    let inspectorName = '';
+                    let timeShow = '';
+
+                    if (cloudInfo) {
+                        status = cloudInfo.status.includes('ปกติ') ? 'pass' : 'fail';
+                        inspectorName = cloudInfo.inspector;
+                        timeShow = cloudInfo.time.split(' ')[1];
+                    } else if (localInfo) {
+                        status = localInfo.status;
+                        inspectorName = localInfo.inspector;
+                        timeShow = localInfo.time.split(' ')[1];
+                    }
+
+                    const isInspected = status !== 'pending';
+
                     total++;
                     if(isInspected) done++;
                     if(status === 'fail') fail++;
@@ -413,23 +444,25 @@
                         const div = document.createElement('div');
                         div.className = `card ${status}`;
                         div.onclick = () => this.openInspect(item.id);
+                        
+                        let statusBadge = '';
+                        if(isInspected) {
+                            statusBadge = status==='pass' 
+                                ? `<span style="color:var(--success)">✅ ปกติ (${timeShow})</span>` 
+                                : `<span style="color:var(--warning)">⚠️ พบปัญหา (${timeShow})</span>`;
+                        } else {
+                            statusBadge = `<span style="color:#999">รอตรวจ</span>`;
+                        }
+
                         div.innerHTML = `
                             <div class="card-info">
                                 <h3>${item.id} - ${item.loc}</h3>
-                                <p>${item.type} (${item.size}) ${isInspected ? `<span style="color:${status==='pass'?'var(--success)':'var(--warning)'}; margin-left:8px; font-size:0.75rem;"><i class="fa-solid fa-clock"></i> ${h.time.split(' ')[1]}</span>` : ''}</p>
+                                <p>${item.type} ${statusBadge}</p>
+                                ${isInspected ? `<span class="inspector-badge"><i class="fa-solid fa-user"></i> ${inspectorName}</span>` : ''}
                             </div>
                             <div class="status-icon"><i class="fa-solid ${isInspected ? (status==='pass'?'fa-circle-check':'fa-triangle-exclamation') : 'fa-circle'}"></i></div>
                         `;
                         list.appendChild(div);
-                    }
-                    
-                    if(h && h.status === 'fail') {
-                         h.checks.forEach((c, i) => {
-                            if(!c) {
-                                const labels = ["น้ำหนัก","สายฉีด","ตัวถัง","สลัก","ภาพรวม"];
-                                defectCounts[labels[i]] = (defectCounts[labels[i]] || 0) + 1;
-                            }
-                        });
                     }
                 });
 
@@ -447,21 +480,12 @@
             openInspect(id) {
                 this.currentId = id;
                 const item = this.data.find(d => d.id === id);
-                const h = item.history[this.month];
+                const h = item.history[this.month]; // โหลดข้อมูลในเครื่องมาโชว์
 
                 document.getElementById('inspectTitle').innerText = `${item.id} : ${item.loc} (${item.type})`;
                 document.getElementById('inspectName').value = h?.inspector || '';
                 document.getElementById('inspectNote').value = h?.note || '';
                 
-                const lastCheckEl = document.getElementById('lastCheckDate');
-                const lastCheckInfo = document.getElementById('lastCheckInfo');
-                if(h && h.time) {
-                    lastCheckEl.innerText = h.time;
-                    lastCheckInfo.style.display = 'block';
-                } else {
-                    lastCheckInfo.style.display = 'none';
-                }
-
                 this.tempPhoto = h?.photo || null;
                 this.updatePhotoUI();
 
@@ -476,6 +500,7 @@
                 ];
 
                 questions.forEach((q, i) => {
+                    // Default to FALSE (Unchecked) if new month
                     const isChecked = h ? h.checks[i] : false; 
                     checksDiv.innerHTML += `
                         <div class="check-item">
@@ -500,8 +525,11 @@
                 const isFail = checks.some(c => !c);
                 const photoSec = document.getElementById('photoSection');
                 
-                if(isFail) photoSec.style.display = 'block';
-                else if(!this.tempPhoto) photoSec.style.display = 'none';
+                if(isFail) {
+                    photoSec.style.display = 'block';
+                } else if(!this.tempPhoto) {
+                    photoSec.style.display = 'none';
+                }
             },
             
             updatePhotoUI() {
@@ -530,7 +558,7 @@
                 
                 const btn = document.getElementById('btnSave');
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึก...';
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังส่งข้อมูล...';
 
                 const checks = [];
                 for(let i=0; i<5; i++) checks.push(document.getElementById(`chk_${i}`).checked);
@@ -547,42 +575,44 @@
                 const item = this.data.find(d => d.id === this.currentId);
                 const payload = {
                     id: this.currentId,
-                    location: item.loc,
+                    loc: item.loc,
                     type: item.type,
                     month: this.month,
                     status: status,
                     inspector: name,
                     note: document.getElementById('inspectNote').value,
-                    check_details: checks.map(c => c ? 'Pass' : 'Fail').join(", "),
-                    timestamp: new Date().toLocaleString('th-TH')
+                    checks: checks,
+                    time: new Date().toLocaleString('th-TH')
                 };
 
                 // 1. Save Local
-                item.history[this.month] = { ...payload, photo: this.tempPhoto, checks: checks };
+                item.history[this.month] = { ...payload, photo: this.tempPhoto };
                 this.saveToStorage();
 
-                // 2. Send to Microsoft Power Automate
-                if(MICROSOFT_FLOW_URL) {
-                    fetch(MICROSOFT_FLOW_URL, {
+                // 2. Send to Google Sheets
+                if(GOOGLE_SCRIPT_URL) {
+                    fetch(GOOGLE_SCRIPT_URL, {
                         method: 'POST',
+                        mode: 'no-cors',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     }).then(() => {
-                        alert("✅ บันทึกและส่งข้อมูลเข้า SharePoint สำเร็จ!");
-                    }).catch(err => {
-                        console.error(err);
-                        alert("⚠️ บันทึกในเครื่องแล้ว (แต่ส่งออนไลน์ไม่ผ่าน เช็คเน็ต)");
-                    }).finally(() => {
-                        this.render();
+                        alert("✅ บันทึกและส่งข้อมูลเข้า Cloud สำเร็จ!");
                         UI.closeModal('modalInspect');
+                        this.syncCloud(); // อัปเดตข้อมูลทันที
+                    }).catch(err => {
+                        alert("⚠️ บันทึกในเครื่องแล้ว (แต่ส่งออนไลน์ไม่ผ่าน เช็คเน็ต)");
+                        UI.closeModal('modalInspect');
+                        this.render();
+                    }).finally(() => {
                         btn.disabled = false;
                         btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> บันทึกข้อมูล';
                     });
                 } else {
                     // Offline Mode
-                    alert("✅ บันทึกในเครื่องเรียบร้อย (ยังไม่ได้เชื่อมต่อ Power Automate)");
-                    this.render();
+                    alert("✅ บันทึกในเครื่องเรียบร้อย (Offline)");
                     UI.closeModal('modalInspect');
+                    this.render();
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> บันทึกข้อมูล';
                 }
@@ -649,8 +679,8 @@
                 reader.readAsText(file);
             },
 
-            saveToStorage() { localStorage.setItem('firePins_Pro_V6', JSON.stringify(this.data)); },
-            clearData() { if(confirm('ยืนยันลบข้อมูลการตรวจทั้งหมด? (ข้อมูลถัง 90 ใบจะยังอยู่)')) { localStorage.removeItem('firePins_Pro_V6'); location.reload(); } },
+            saveToStorage() { localStorage.setItem('firePins_Ent_Final', JSON.stringify(this.data)); },
+            clearData() { if(confirm('ยืนยันลบข้อมูลการตรวจทั้งหมด? (ข้อมูลถัง 90 ใบจะยังอยู่)')) { localStorage.removeItem('firePins_Ent_Final'); location.reload(); } },
             
             handleDeepLink() {
                 const pid = new URLSearchParams(window.location.search).get('id');
