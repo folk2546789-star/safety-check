@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FireCheck Enterprise</title>
+    <title>FireCheck Enterprise V4</title>
     
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -15,11 +15,11 @@
     <style>
         /* --- DESIGN SYSTEM (Red Theme) --- */
         :root {
-            --primary: #D32F2F;         
+            --primary: #D32F2F;          
             --primary-dark: #B71C1C;
-            --secondary: #263238;      
-            --success: #2E7D32;         
-            --warning: #F9A825;         
+            --secondary: #263238;       
+            --success: #2E7D32;          
+            --warning: #F9A825;          
             --bg-body: #F3F2F1;
             --surface: #FFFFFF;
             --text-main: #201F1E;
@@ -80,8 +80,8 @@
             white-space: nowrap; cursor: pointer; transition: all 0.2s; font-weight: 500;
         }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-        #filter-all.active { background: var(--text-main); }     
-        #filter-pending.active { background: var(--primary); }   
+        #filter-all.active { background: var(--text-main); }      
+        #filter-pending.active { background: var(--primary); }    
         #filter-fail.active { background: var(--warning); color: #333; }
 
         #list-container { flex: 1; overflow-y: auto; padding: 10px 15px; display: grid; gap: 10px; padding-bottom: 90px; }
@@ -119,8 +119,18 @@
         .sheet-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         
         /* FORM COMPONENTS */
+        .quick-pass-btn {
+            width: 100%; padding: 12px; 
+            border: 2px solid var(--success); color: var(--success);
+            background: rgba(46, 125, 50, 0.05);
+            border-radius: 12px; font-weight: 600; font-family: 'Prompt';
+            cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.2s;
+        }
+        .quick-pass-btn:active { background: var(--success); color: white; }
+
         .check-item { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #F5F5F5; align-items: center; }
-        .check-label { font-size: 0.95rem; font-weight: 500; color: var(--text-main); }
+        .check-label { font-size: 0.95rem; font-weight: 500; color: var(--text-main); width: 75%; }
         
         .switch { position: relative; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -165,7 +175,7 @@
     <div class="dashboard">
         <div class="progress-card">
             <div class="stat-row">
-                <span style="font-weight:600; color:var(--text-main);">ความคืบหน้า (Cloud)</span>
+                <span style="font-weight:600; color:var(--text-main);">ความคืบหน้า (Real-time)</span>
                 <span id="statsPercent" style="color:var(--primary); font-weight:700;">0%</span>
             </div>
             <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
@@ -202,12 +212,20 @@
                 <div>
                     <h2 style="margin:0; color:var(--text-main); font-size:1.4rem;">บันทึกผล</h2>
                     <p id="inspectTitle" style="color:var(--text-muted); margin:4px 0 0 0; font-size:0.9rem;">FE-XX</p>
+                    <p id="inspectSubtitle" style="font-size:0.8rem; color:#888;">ประเภท: -</p>
                     <p id="lastCheckInfo" style="font-size:0.75rem; color:var(--success); margin-top:4px; display:none;"><i class="fa-solid fa-clock-rotate-left"></i> ตรวจล่าสุด: <span id="lastCheckDate"></span></p>
                 </div>
                 <button onclick="UI.closeModal('modalInspect')" style="background:none; border:none; font-size:1.8rem; color:#DDD; line-height:1;">&times;</button>
             </div>
 
-            <div style="margin-top:20px;" id="checklistForm"></div>
+            <div style="margin-top:20px;">
+                <!-- ปุ่มกดทีเดียวผ่าน -->
+                <button class="quick-pass-btn" onclick="App.setAllPass()">
+                    <i class="fa-solid fa-check-double"></i> ปกติทั้งหมด (All Pass)
+                </button>
+                
+                <div id="checklistForm"></div>
+            </div>
 
             <!-- Photo Upload -->
             <div id="photoSection">
@@ -288,23 +306,23 @@
         // ============================================
         // ⚠️ วางลิงก์ Google Apps Script ตรงนี้ ⚠️
         // ============================================
-        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwNiGhSMS6aDCjCBFBUBkp91EbkAsLF7n5XsyzoLV04mPpa6AJPNQxqPOCaKmISkFKAyA/exec"; 
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwiKD-qcR0eITA4p1ywaH8ywUXV9LKgMwoV1IauvyY5v-hEUJTEo7kOE739ZQ3w1BEUQA/exec"; 
 
-        // --- DATASET: 90 POINTS (FULL) ---
+        // --- DATASET: 90 POINTS (FULL) - Corrected Spelling ---
         const DB_INIT = [
-            { id: "FE-01", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Work Shop" },
-            { id: "FE-02", type: "เคมีแห้ง", size: "15 ปอนด์", loc: "Work Shop" },
+            { id: "FE-01", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Workshop" },
+            { id: "FE-02", type: "เคมีแห้ง", size: "15 ปอนด์", loc: "Workshop" },
             { id: "FE-03", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Office 1 Fl." },
             { id: "FE-04", type: "CO2", size: "10 ปอนด์", loc: "Office 2 Fl." },
             { id: "FE-05", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Office 2 Fl." },
             { id: "FE-06", type: "CO2", size: "10 ปอนด์", loc: "Office 2 Fl." },
             { id: "FE-07", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Canteen" },
-            { id: "FE-08", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Work Shop" },
+            { id: "FE-08", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Workshop" },
             { id: "FE-09", type: "CO2", size: "10 ปอนด์", loc: "Office 2 Fl." },
             { id: "FE-10", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Fire Pump Rm." },
             { id: "FE-11", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Utility Plant" },
-            { id: "FE-12", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-13", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse" },
+            { id: "FE-12", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-13", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse" },
             { id: "FE-14", type: "CO2", size: "10 ปอนด์", loc: "Locker Room" },
             { id: "FE-15", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Utility Plant" },
             { id: "FE-16", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Utility Plant" },
@@ -320,10 +338,10 @@
             { id: "FE-26", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Office 2 Fl. (FHC4)" },
             { id: "FE-27", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Production (FHC5)" },
             { id: "FE-28", type: "Halotron", size: "10 ปอนด์", loc: "Production (FHC6)" },
-            { id: "FE-29", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse (FHC7)" },
+            { id: "FE-29", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse (FHC7)" },
             { id: "FE-30", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Production (FHC8)" },
             { id: "FE-31", type: "Halotron", size: "10 ปอนด์", loc: "Production (FHC9)" },
-            { id: "FE-32", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse (FHC10)" },
+            { id: "FE-32", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse (FHC10)" },
             { id: "FE-33", type: "Halotron", size: "10 ปอนด์", loc: "Production Area" },
             { id: "FE-34", type: "Halotron", size: "10 ปอนด์", loc: "Production Area" },
             { id: "FE-35", type: "Halotron", size: "10 ปอนด์", loc: "Canteen" },
@@ -332,31 +350,31 @@
             { id: "FE-38", type: "CO2", size: "10 ปอนด์", loc: "Canteen" },
             { id: "FE-39", type: "CO2", size: "10 ปอนด์", loc: "Locker Room" },
             { id: "FE-40", type: "Halotron", size: "10 ปอนด์", loc: "Locker Room" },
-            { id: "FE-41", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
+            { id: "FE-41", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
             { id: "FE-42", type: "Halotron", size: "10 ปอนด์", loc: "Guard House" },
             { id: "FE-43", type: "Halotron", size: "10 ปอนด์", loc: "Lobby 1st Floor" },
             { id: "FE-44", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Production Area" },
-            { id: "FE-45", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse" },
+            { id: "FE-45", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse" },
             { id: "FE-46", type: "เคมีแห้ง", size: "15 ปอนด์", loc: "Utility Plant" },
-            { id: "FE-47", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
+            { id: "FE-47", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
             { id: "FE-48", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Utility Plant" },
             { id: "FE-49", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Fire Pump Rm." },
             { id: "FE-50", type: "CO2", size: "10 ปอนด์", loc: "Production Area" },
             { id: "FE-51", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Toliet" },
-            { id: "FE-52", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-53", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-54", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-55", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse" },
+            { id: "FE-52", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-53", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-54", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-55", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse" },
             { id: "FE-56", type: "Halotron", size: "10 ปอนด์", loc: "Production Area" },
-            { id: "FE-57", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
+            { id: "FE-57", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
             { id: "FE-58", type: "เคมีแห้ง", size: "5 ปอนด์", loc: "ห้องพยาบาล" },
-            { id: "FE-59", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-60", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-61", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-62", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-63", type: "BF2000", size: "10 ปอนด์", loc: "WareHouse" },
-            { id: "FE-64", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse (FHC11)" },
-            { id: "FE-65", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "WareHouse (FHC12)" },
+            { id: "FE-59", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-60", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-61", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-62", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-63", type: "BF2000", size: "10 ปอนด์", loc: "Warehouse" },
+            { id: "FE-64", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse (FHC11)" },
+            { id: "FE-65", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Warehouse (FHC12)" },
             { id: "FE-66", type: "Halotron", size: "10 ปอนด์", loc: "Office 2 Fl." },
             { id: "FE-67", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Locker Room" },
             { id: "FE-68", type: "Halotron", size: "10 ปอนด์", loc: "M&E Room" },
@@ -364,7 +382,7 @@
             { id: "FE-70", type: "เคมีแห้ง", size: "15 ปอนด์", loc: "Utility Plant" },
             { id: "FE-71", type: "BF2000", size: "10 ปอนด์", loc: "Utility Plant" },
             { id: "FE-72", type: "BF2000", size: "10 ปอนด์", loc: "Utility Plant" },
-            { id: "FE-73", type: "BF2000", size: "10 ปอนด์", loc: "Ware House" },
+            { id: "FE-73", type: "BF2000", size: "10 ปอนด์", loc: "Warehouse" },
             { id: "FE-74", type: "BF2000", size: "10 ปอนด์", loc: "Production (FHC13)" },
             { id: "FE-75", type: "BF2000", size: "10 ปอนด์", loc: "Production (FHC14)" },
             { id: "FE-76", type: "BF2000", size: "10 ปอนด์", loc: "Production Area" },
@@ -380,29 +398,43 @@
             { id: "FE-86", type: "Halotron", size: "10 ปอนด์", loc: "Production Area" },
             { id: "FE-87", type: "Halotron", size: "10 ปอนด์", loc: "Production Area" },
             { id: "FE-88", type: "เคมีแห้ง", size: "10 ปอนด์", loc: "Production Area" },
-            { id: "FE-89", type: "Halotron", size: "10 ปอนด์", loc: "WareHouse" },
+            { id: "FE-89", type: "Halotron", size: "10 ปอนด์", loc: "Warehouse" },
             { id: "FE-90", type: "BF2000", size: "10 ปอนด์", loc: "AHU. Room" },
         ];
 
         // --- APP ENGINE ---
         const App = {
             data: [],
-            cloudStatus: {}, // เก็บสถานะจาก Cloud
+            cloudStatus: {}, // เก็บสถานะจาก Cloud (Real-time)
             month: '',
             filterType: 'all',
             currentId: null,
+            currentCheckList: [], // เก็บรายการคำถามปัจจุบัน
             scanner: null,
             tempPhoto: null,
+            autoSyncInterval: null,
 
             init() {
-                const stored = localStorage.getItem('firePins_Ent_Final_V2');
+                const stored = localStorage.getItem('firePins_Ent_V4');
                 this.data = stored ? JSON.parse(stored) : DB_INIT.map(d => ({ ...d, history: {} }));
                 this.month = new Date().toISOString().slice(0, 7);
                 document.getElementById('monthPicker').value = this.month;
                 this.updateOnlineStatus();
                 this.render();
-                this.syncCloud(); // ดึงข้อมูลทันทีเมื่อเปิดแอป
+                
+                // Real-time: Sync immediately and start polling
+                this.syncCloud();
+                this.startAutoSync();
+                
                 this.handleDeepLink();
+            },
+
+            startAutoSync() {
+                // Poll Cloud every 15 seconds
+                if(this.autoSyncInterval) clearInterval(this.autoSyncInterval);
+                this.autoSyncInterval = setInterval(() => {
+                    this.syncCloud(true); // true = silent mode
+                }, 15000);
             },
 
             updateOnlineStatus() {
@@ -410,7 +442,7 @@
                 const text = document.querySelector('.header-status');
                 if(CLOUD_URL.startsWith('http')) {
                     badge.classList.add('online');
-                    text.innerHTML = '<span class="dot online"></span> Cloud Sync';
+                    text.innerHTML = '<span class="dot online"></span> Real-time';
                 } else {
                     badge.classList.remove('online');
                     text.innerHTML = '<span class="dot"></span> Offline';
@@ -418,12 +450,11 @@
             },
 
             // ดึงข้อมูลจาก Google Sheet
-            syncCloud() {
+            syncCloud(silent = false) {
                 if(!CLOUD_URL) return;
                 
-                // Show Loading (Optional: Add spinner)
                 const btn = document.querySelector('.fab-refresh i');
-                if(btn) btn.classList.add('fa-spin');
+                if(!silent && btn) btn.classList.add('fa-spin');
 
                 fetch(CLOUD_URL + "?action=read")
                 .then(res => res.json())
@@ -431,7 +462,6 @@
                     this.cloudStatus = {};
                     data.forEach(row => {
                         // เก็บข้อมูลเฉพาะของเดือนปัจจุบัน
-                        // เบื้องต้นใช้ timestamp เทียบเดือน
                         if(row.time.startsWith(new Date().getFullYear())) { 
                            this.cloudStatus[row.id] = { status: row.status, inspector: row.inspector, time: row.time };
                         }
@@ -440,20 +470,24 @@
                 })
                 .catch(err => console.error("Sync Error:", err))
                 .finally(() => {
-                     if(btn) btn.classList.remove('fa-spin');
+                      if(!silent && btn) btn.classList.remove('fa-spin');
                 });
             },
 
             render() {
                 const list = document.getElementById('list-container');
                 const search = document.getElementById('searchInput').value.toLowerCase();
+                
+                // ตรวจสอบว่า Element ยังอยู่ไหมก่อน render (ป้องกัน error ตอนสลับหน้า)
+                if(!list) return;
+
                 list.innerHTML = '';
                 
                 let total=0, done=0, fail=0;
+                // Defect Counter สำหรับกราฟ
                 const defectCounts = {};
 
                 this.data.forEach(item => {
-                    // ใช้ข้อมูลจาก Cloud ถ้ามี, ถ้าไม่มีใช้ในเครื่อง
                     const cloudInfo = this.cloudStatus[item.id];
                     const localInfo = item.history[this.month];
                     
@@ -465,7 +499,6 @@
                     if (cloudInfo) {
                         status = cloudInfo.status.includes('ปกติ') ? 'pass' : 'fail';
                         inspectorName = cloudInfo.inspector;
-                        // Extract time from timestamp string if possible
                         timeShow = cloudInfo.time.split(' ')[1] || '';
                     } else if (localInfo) {
                         status = localInfo.status;
@@ -508,13 +541,11 @@
                         list.appendChild(div);
                     }
                     
-                    if(localInfo && localInfo.status === 'fail') {
-                         localInfo.checks.forEach((c, i) => {
-                            if(!c) {
-                                const labels = ["น้ำหนัก","สายฉีด","ตัวถัง","สลัก","ภาพรวม"];
-                                defectCounts[labels[i]] = (defectCounts[labels[i]] || 0) + 1;
-                            }
-                        });
+                    // นับจำนวน Defect (เฉพาะ Local เพราะ Cloud ไม่ได้ส่ง details กลับมาละเอียดใน V1)
+                    if(localInfo && localInfo.status === 'fail' && localInfo.failTopics) {
+                         localInfo.failTopics.forEach(topic => {
+                             defectCounts[topic] = (defectCounts[topic] || 0) + 1;
+                         });
                     }
                 });
 
@@ -546,21 +577,48 @@
                 alert('เพิ่มจุดตรวจสำเร็จ!');
             },
 
-            deleteItem() {
-                if(confirm(`ยืนยันลบจุดตรวจ ${this.currentId} ถาวร?`)) {
-                    this.data = this.data.filter(d => d.id !== this.currentId);
-                    this.saveToStorage();
-                    UI.closeModal('modalInspect');
-                    this.render();
+            // --- INSPECTION LOGIC ---
+            getChecklistItems(type) {
+                // คำถามกลาง
+                const common = [
+                    "ตำแหน่งติดตั้งเข้าถึงง่าย/ไม่ถูกกีดขวาง",
+                    "ป้ายบ่งชี้จุดติดตั้งชัดเจน/ถูกต้อง",
+                    "สภาพตัวถังปกติ ไม่ผุ/ไม่เป็นสนิม/ไม่บุบ",
+                    "สลักนิรภัยและซีลล็อกอยู่ครบ สภาพดี"
+                ];
+
+                // แยกตามประเภท
+                if (type.includes("CO2")) {
+                    return [
+                        ...common,
+                        "น้ำหนักถังปกติ (จากการชั่งตวง)",
+                        "กระบอกฉีด/กรวยฉีด สภาพสมบูรณ์"
+                    ];
+                } else {
+                    // เคมีแห้ง, Halotron, BF2000, etc. (มีเกจวัด)
+                    return [
+                        ...common,
+                        "เกจวัดแรงดันอยู่แถบสีเขียว (พร้อมใช้)",
+                        "สายฉีดสภาพดี ไม่แตกลายงา/ไม่อุดตัน"
+                    ];
                 }
             },
 
             openInspect(id) {
                 this.currentId = id;
                 const item = this.data.find(d => d.id === id);
+                
+                // 1. Check Cloud status first (Prevent Duplicate)
+                const cloudInfo = this.cloudStatus[id];
+                if (cloudInfo) {
+                     // แจ้งเตือนถ้ามีคนตรวจแล้ว
+                     alert(`⚠️ จุดนี้ถูกตรวจแล้วโดยคุณ: ${cloudInfo.inspector}\nเมื่อเวลา: ${cloudInfo.time}\n(คุณสามารถตรวจซ้ำเพื่ออัปเดตข้อมูลได้)`);
+                }
+
                 const h = item.history[this.month];
 
-                document.getElementById('inspectTitle').innerText = `${item.id} : ${item.loc} (${item.type})`;
+                document.getElementById('inspectTitle').innerText = `${item.id} : ${item.loc}`;
+                document.getElementById('inspectSubtitle').innerText = `ประเภท: ${item.type} (${item.size})`;
                 document.getElementById('inspectName').value = h?.inspector || '';
                 document.getElementById('inspectNote').value = h?.note || '';
                 
@@ -576,18 +634,14 @@
                 this.tempPhoto = h?.photo || null;
                 this.updatePhotoUI();
 
+                // สร้าง Checklist ตามประเภทถัง
                 const checksDiv = document.getElementById('checklistForm');
                 checksDiv.innerHTML = '';
-                const questions = [
-                    "สภาพตัวถังปกติ ไม่ผุ/บุบ",
-                    "สายฉีดสภาพดี ไม่แตกลายงา",
-                    "เกจวัดแรงดันอยู่แถบสีเขียว",
-                    "สลักนิรภัยและซีลล็อกอยู่ครบ",
-                    "ตำแหน่งติดตั้งเข้าถึงง่าย"
-                ];
+                this.currentCheckList = this.getChecklistItems(item.type);
 
-                questions.forEach((q, i) => {
-                    const isChecked = h ? h.checks[i] : false; 
+                this.currentCheckList.forEach((q, i) => {
+                    // ถ้าเคยตรวจไว้แล้ว ให้ดึงค่าเดิมมาแสดง ถ้ายังไม่เคย ให้เป็น false
+                    const isChecked = h && h.checks ? h.checks[i] : false; 
                     checksDiv.innerHTML += `
                         <div class="check-item">
                             <span class="check-label">${i+1}. ${q}</span>
@@ -602,9 +656,18 @@
                 UI.openModal('modalInspect');
             },
 
+            // กดปุ่มเดียวผ่านหมด
+            setAllPass() {
+                this.currentCheckList.forEach((_, i) => {
+                    const el = document.getElementById(`chk_${i}`);
+                    if(el) el.checked = true;
+                });
+                this.checkStatus();
+            },
+
             checkStatus() {
                 const checks = [];
-                for(let i=0; i<5; i++) {
+                for(let i=0; i<this.currentCheckList.length; i++) {
                     const el = document.getElementById(`chk_${i}`);
                     if(el) checks.push(el.checked);
                 }
@@ -629,12 +692,48 @@
 
             handlePhoto(input) {
                 if (input.files && input.files[0]) {
+                    const file = input.files[0];
                     const reader = new FileReader();
+                    
                     reader.onload = (e) => {
-                        this.tempPhoto = e.target.result;
-                        this.updatePhotoUI();
-                    }
-                    reader.readAsDataURL(input.files[0]);
+                        const img = new Image();
+                        img.src = e.target.result;
+                        
+                        img.onload = () => {
+                            // Resize logic
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            // Max dimensions
+                            const MAX_WIDTH = 800;
+                            const MAX_HEIGHT = 800;
+                            
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            if (width > height) {
+                                if (width > MAX_WIDTH) {
+                                    height *= MAX_WIDTH / width;
+                                    width = MAX_WIDTH;
+                                }
+                            } else {
+                                if (height > MAX_HEIGHT) {
+                                    width *= MAX_HEIGHT / height;
+                                    height = MAX_HEIGHT;
+                                }
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            // Compress to JPEG 0.7 quality (fast & small)
+                            this.tempPhoto = canvas.toDataURL('image/jpeg', 0.7);
+                            this.updatePhotoUI();
+                        };
+                    };
+                    reader.readAsDataURL(file);
                 }
             },
 
@@ -646,8 +745,18 @@
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึก...';
 
+                // Collect Checkbox Data
                 const checks = [];
-                for(let i=0; i<5; i++) checks.push(document.getElementById(`chk_${i}`).checked);
+                const failTopics = [];
+                for(let i=0; i<this.currentCheckList.length; i++) {
+                    const isChecked = document.getElementById(`chk_${i}`).checked;
+                    checks.push(isChecked);
+                    if(!isChecked) {
+                        // เก็บหัวข้อที่ไม่ผ่าน
+                        failTopics.push(this.currentCheckList[i]);
+                    }
+                }
+
                 const status = checks.every(c => c === true) ? 'pass' : 'fail';
                 
                 if(status === 'fail' && !this.tempPhoto) {
@@ -667,7 +776,8 @@
                     status: status,
                     inspector: name,
                     note: document.getElementById('inspectNote').value,
-                    checks: checks,
+                    checks: checks, // Boolean Array
+                    failTopics: failTopics, // Array of strings (Reasons)
                     time: new Date().toLocaleString('th-TH')
                 };
 
@@ -675,7 +785,7 @@
                 item.history[this.month] = { ...payload, photo: this.tempPhoto };
                 this.saveToStorage();
 
-                // 2. Send to Cloud (if URL provided)
+                // 2. Send to Cloud
                 if(CLOUD_URL && CLOUD_URL.startsWith('http')) {
                     fetch(CLOUD_URL, {
                         method: 'POST',
@@ -683,11 +793,11 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     }).then(() => {
-                        alert("✅ บันทึกสำเร็จ! ข้อมูลถูกส่งไปที่ Cloud แล้ว");
+                        alert("✅ บันทึกสำเร็จ!");
                         UI.closeModal('modalInspect');
-                        this.syncCloud(); // Update local view with cloud data
+                        this.syncCloud(); 
                     }).catch(err => {
-                        alert("⚠️ บันทึกในเครื่องแล้ว (แต่ส่งออนไลน์ไม่ผ่าน)");
+                        alert("⚠️ บันทึกในเครื่องแล้ว (ส่งออนไลน์ไม่ผ่าน)");
                         UI.closeModal('modalInspect');
                         this.render();
                     }).finally(() => {
@@ -695,7 +805,6 @@
                         btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> บันทึกข้อมูล';
                     });
                 } else {
-                    // Offline Mode
                     alert("✅ บันทึกในเครื่องเรียบร้อย (Offline)");
                     UI.closeModal('modalInspect');
                     this.render();
@@ -720,20 +829,33 @@
             },
             
             exportExcel() {
-                let csv = `\uFEFFID,Location,Type,Size,Status,Inspector,Timestamp,Note,Result\n`;
+                // Header CSV
+                let csv = `\uFEFFID,Location,Type,Size,Status,Inspector,Timestamp,Note,Check_Result\n`;
+                
                 this.data.forEach(d => {
                     const h = d.history[this.month];
                     if(h) {
-                        const checks = h.checks.map(c => c ? 'PASS' : 'FAIL').join(',');
-                        const failed = [];
-                        const topics = ["Tank","Hose","Gauge","Pin","Access"];
-                        h.checks.forEach((c, i) => { if(!c) failed.push(topics[i]); });
-                        const result = failed.length > 0 ? `FAIL: ${failed.join(',')}` : 'PASS';
-                        csv += `${d.id},"${d.loc}","${d.type}","${d.size}",${h.status},"${h.inspector}",${h.time},"${h.note||''}",${result}\n`;
+                        // รวมผลการตรวจ: ถ้าผ่านหมด = PASS, ถ้าไม่ผ่าน = รวมหัวข้อที่ตก
+                        let resultStr = "PASS";
+                        if(h.status === 'fail') {
+                            // ดึงหัวข้อที่ตกจาก failTopics (ถ้ามี) หรือคำนวณใหม่
+                            if(h.failTopics && h.failTopics.length > 0) {
+                                resultStr = "FAIL: " + h.failTopics.join(" | ");
+                            } else {
+                                resultStr = "FAIL (No Details)";
+                            }
+                        }
+
+                        // Sanitize Text (ป้องกัน comma ทำ csv เพี้ยน)
+                        const note = (h.note || '').replace(/,/g, ' ');
+                        const safeResult = resultStr.replace(/,/g, ' ');
+
+                        csv += `${d.id},"${d.loc}","${d.type}","${d.size}",${h.status},"${h.inspector}",${h.time},"${note}","${safeResult}"\n`;
                     } else {
-                        csv += `${d.id},"${d.loc}","${d.type}","${d.size}",PENDING,,,,,\n`;
+                        csv += `${d.id},"${d.loc}","${d.type}","${d.size}",PENDING,,,,\n`;
                     }
                 });
+
                 const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement("a");
                 link.href = URL.createObjectURL(blob);
@@ -765,8 +887,8 @@
                 reader.readAsText(file);
             },
 
-            saveToStorage() { localStorage.setItem('firePins_Pro_V7', JSON.stringify(this.data)); },
-            clearData() { if(confirm('ยืนยันลบข้อมูลการตรวจทั้งหมด? (ข้อมูลถัง 90 ใบจะยังอยู่)')) { localStorage.removeItem('firePins_Pro_V7'); location.reload(); } },
+            saveToStorage() { localStorage.setItem('firePins_Ent_V4', JSON.stringify(this.data)); },
+            clearData() { if(confirm('ยืนยันลบข้อมูลการตรวจทั้งหมด? (ข้อมูลถัง 90 ใบจะยังอยู่)')) { localStorage.removeItem('firePins_Ent_V4'); location.reload(); } },
             
             handleDeepLink() {
                 const pid = new URLSearchParams(window.location.search).get('id');
@@ -807,6 +929,4 @@
         window.onload = () => App.init();
     </script>
 </body>
-
 </html>
-
